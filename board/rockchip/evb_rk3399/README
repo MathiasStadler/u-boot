@@ -103,7 +103,7 @@ Package the image for Rockchip miniloader(option 2)
 
   ERROR : rkbin/tools/RK3399TRUST.ini NOT FOUND in repo git clone https://github.com/rockchip-linux/rkbin.git
   ERROR : You found a RK3399TRUST.ini here https://github.com/ayufan-rock64/android-u-boot/tree/master/tools/rk_tools/RKTRUST
-  ERROR : Change the path insiode the file to PATH=rkbin/rk33/bl31.elf
+  ERROR : Change the path inside the file to PATH=rkbin/rk33/bl31.elf
 
   > ./rkbin/tools/trust_merger rkbin/tools/RK3399TRUST.ini
   > ./rkbin/tools/loaderimage --pack --uboot u-boot/u-boot-dtb.bin uboot.img
