@@ -65,11 +65,21 @@ Compile the U-Boot
 Compile the rkdeveloptool
 =======================
   Follow instructions in latest README
-  > cd ../rkflashtool
+  Install libudev-dev libusb-1.0-0-dev dh-autoreconf if missing
+  > cd ../rkdeveloptool
   > autoreconf -i
   > ./configure
+  
+  compile error help:
+    if you encounter the error like below:
+    ./configure: line 4269: syntax error near unexpected token `LIBUSB1,libusb-1.0'
+    ./configure: line 4269: `PKG_CHECK_MODULES(LIBUSB1,libusb-1.0)'
+    You should install pkg-config libusb-1.0:
+	  > sudo apt-get install pkg-config libusb-1.0 
+
   > make
   > sudo make install
+  > cd ..
 
   Get rkdeveloptool in you Host in this step.
 
@@ -81,7 +91,7 @@ Package the image
 
 Package the image for U-Boot SPL(option 1)
 --------------------------------
-  > cd ..
+  > cd u-boot
   > tools/mkimage -n rk3399 -T rksd -d spl/u-boot-spl.bin idbspl.img
 
   Get idbspl.img in this step.
@@ -89,7 +99,12 @@ Package the image for U-Boot SPL(option 1)
 Package the image for Rockchip miniloader(option 2)
 ------------------------------------------
   > cd ..
-  > cp arm-trusted-firmware/build/rk3399/release/bl31.elf rkbin/rk33
+  > cp arm-trusted-firmware/build/rk3399/release/bl31/bl31.elf rkbin/rk33
+
+  ERROR : rkbin/tools/RK3399TRUST.ini NOT FOUND in repo git clone https://github.com/rockchip-linux/rkbin.git
+  ERROR : You found a RK3399TRUST.ini here https://github.com/ayufan-rock64/android-u-boot/tree/master/tools/rk_tools/RKTRUST
+  ERROR : Change the path insiode the file to PATH=rkbin/rk33/bl31.elf
+
   > ./rkbin/tools/trust_merger rkbin/tools/RK3399TRUST.ini
   > ./rkbin/tools/loaderimage --pack --uboot u-boot/u-boot-dtb.bin uboot.img
 
@@ -98,11 +113,18 @@ Package the image for Rockchip miniloader(option 2)
 Flash the image to eMMC
 =======================
 
+flash error help:
+  Creating Comm Object failed!
+  make udev rules:
+  > echo 'SUBSYSTEM=="usb", ATTR{idVendor}=="2207", MODE="0666", GROUP="plugdev"' | sudo tee /etc/udev/rules.d/51-android.rules
+  restart udev
+  > sudo udevadm control --reload-rules && sudo udevadm trigger
+
 Flash the image with U-Boot SPL(option 1)
 -------------------------------
 Power on(or reset with RESET KEY) with MASKROM KEY preesed, and then:
   > rkdeveloptool db rkbin/rk33/rk3399_loader_v1.08.106.bin
-  > rkdeveloptool wl 64 u-boot/idbspl.img
+  > rkdeveloptool wl 0x40 u-boot/idbspl.img
   > rkdeveloptool wl 0x4000 u-boot/u-boot.itb
   > rkdeveloptool rd
 
